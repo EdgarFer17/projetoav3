@@ -1,11 +1,2 @@
-ID: 1, Nome: edgar, Email: 123, Senha: 1233
-ID: 2, Nome: lucas, Email: ai, Senha: ai
-ID: 1, Nome: edgar, Email: 123, Senha: 12333
-ID: 1, Nome: edgar, Email: edgar, Senha: 123
-ID: 1, Nome: edgar, Email: edgar, Senha: 123
-ID: 1, Nome: edgar, Email: edgar, Senha: 123
-ID: 1, Nome: edgar, Email: edgar@gmail.com, Senha: 12
-ID: 2, Nome: gustavo, Email: gusta, Senha: 123
-ID: 3, Nome: edg, Email: 123, Senha: 123
-ID: 1, Nome: henry gabriel andrade, Email: email@., Senha: henry
-ID: 2, Nome: 1, Email: 1, Senha: 1
+ID: 2, Nome: edgar, Email: edgar@gmail.com, Senha: 123
+ID: 3, Nome: edgar, Email: gabriel@gmail, Senha: 123

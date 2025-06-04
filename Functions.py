@@ -17,51 +17,53 @@ def reservar_carona(email_motorista,data_carona,caronas,usuario_logado):
 
 def cadastrar_usuarios(naopode, cadastro, count):
     
-        print('Vamos fazer o seu cadastro!')
-        nome = input('Escreva seu nome completo: ').strip().lower()
-        email = input('Digite um email valido: ').strip().lower()
+    print('Vamos fazer o seu cadastro!')
+    nome = input('Escreva seu nome completo: ').strip().lower()
+    email = input('Digite um email valido: ').strip().lower()
 
-        while True:
-            validacao = True
-            for carac in naopode:
-                if carac in email:
-                    validacao = False
-                    break
-
-            email_existente = False
-            for usuario in cadastro:
-                if usuario['email'] == email:
-                    email_existente = True
-                    break
-
-            if not validacao:
-                email = input('Email inválido (contém caracteres proibidos). Digite novamente: ').lower()
-            elif email_existente:
-                email = input('Este email já está cadastrado. Tente outro: ').lower()
-            else:
+    while True:
+        validacao = True
+        for carac in naopode:
+            if carac in email:
+                validacao = False
                 break
 
-        senha = input('Crie sua senha: ').strip()
-
-        while True:
-            tipo_usuario = input('Você deseja se cadastrar como Motorista ou Usuário? (M/U): ').strip().upper()
-            if tipo_usuario in ['M', 'U']:
+        email_existente = False
+        for usuario in cadastro:
+            if usuario['email'] == email:
+                email_existente = True
                 break
-            else:
-                print('Opção inválida. Digite "M" para Motorista ou "U" para Usuário.')
-
         
-        cadastro.append({
-            'ID': count,
-            'nome': nome,
-            'email': email,
-            'senha': senha,
-            'tipo': 'Motorista' if tipo_usuario == 'M' else 'Usuário'
-        })
-        print('O usuário foi cadastrado com sucesso!')
+        email_valido = '@gmail.com' in email or '@hotmail.com' in email or '@outlook.com' in email
 
-        with open("usuarios.txt", "a", encoding="utf-8") as edgar:
-            edgar.write(f"ID: {count}, Nome: {nome}, Email: {email}, Senha: {senha}\n")
+        if not validacao:
+            email = input('Email inválido (contém caracteres proibidos). Digite novamente: ').lower()
+        elif email_existente:
+            email = input('Este email já está cadastrado. Tente outro: ').lower()
+        elif not email_valido:
+            email = input('Email inválido. O email deve conter @gmail.com, @hotmail.com ou @outlook.com. Digite novamente: ').lower()
+        else:
+            break
+
+    senha = input('Crie sua senha: ').strip()
+
+    while True:
+        tipo_usuario = input('Você deseja se cadastrar como Motorista ou Usuário? (M/U): ').strip().upper()
+        if tipo_usuario in ['M', 'U']:
+            break
+        else:
+            print('Opção inválida. Digite "M" para Motorista ou "U" para Usuário.')
+
+    cadastro.append({
+        'ID': count,
+        'nome': nome,
+        'email': email,
+        'senha': senha,
+        'tipo': 'Motorista' if tipo_usuario == 'M' else 'Usuário'
+    })
+    print('O usuário foi cadastrado com sucesso!')
+    with open("usuarios.txt", "w", encoding="utf-8") as edgar:
+        edgar.write(f"ID: {count}, Nome: {nome}, Email: {email}, Senha: {senha}\n")
 
 def detalhes_da_carona(email_motorista,data_carona,caronas):
 
