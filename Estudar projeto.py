@@ -46,6 +46,7 @@ while True:
                         print('[7] Mostrar Detalhes de Carona')
                         print('[8] Mostrar Caronas Cadastradas')
                         print('[9] Trocar senha da conta')
+                        print('[10] Trocar email da conta')
                     else:
                         print('[1] Ver Caronas Disponíveis')
                         print('[2] Buscar Carona')
@@ -82,23 +83,7 @@ while True:
                             print('Carona cadastrada com sucesso!')
 
                         elif op_menu == 2:
-                            print('------ Caronas Disponíveis ------')
-                            caronas_disponiveis = []
-                            for c in caronas:
-                                if c['vagas'] > 0:
-                                    caronas_disponiveis.append(c)
-                            if len(caronas_disponiveis) == 0:
-                                print('Nenhuma carona disponível no momento.')
-                            else:
-                                for carona in caronas_disponiveis:
-                                    print("\n--- Carona ---")
-                                    print(f"Motorista: {carona['motorista']}")
-                                    print(f"Origem: {carona['origem']}")
-                                    print(f"Destino: {carona['destino']}")
-                                    print(f"Data: {carona['data']}")
-                                    print(f"Horário: {carona['horario']}")
-                                    print(f"Vagas disponíveis: {carona['vagas']}")
-                                    print(f"Valor por vaga: R$ {carona['valor_vaga']:.2f}")
+                            carona_disponiveis(caronas)
 
 
                         elif op_menu == 3:
@@ -130,7 +115,7 @@ while True:
                             email_motorista = input('Digite o e-mail do motorista: ').strip().lower()
                             data_carona = input('Digite a data da carona (ex: DD/MM/AAAA): ').strip()
 
-                            carona_encontrada = verificar_carona(email_motorista,data_carona,caronas,usuario_logado)
+                            carona_encontrada = reservar_carona(email_motorista,data_carona,caronas,usuario_logado)
                             if carona_encontrada:
                                 print('Reseva feita com sucesso!')
                                 
@@ -141,33 +126,7 @@ while True:
                             break
 
                         elif op_menu == 6:
-                            print('----- CANCELAR CADASTRO -----')
-
-                            tem_carona = False
-                            for c in caronas:
-                                if c['email_motorista'] == usuario_logado['email']:
-                                    tem_carona = True
-                                    break
-
-                            if not tem_carona:
-                                print('Você não tem caronas cadastradas.')
-                            else:
-                                data = input('Digite a DATA da carona que deseja cancelar (DD/MM/AAAA): ')
-
-                                encontrou = False
-                                for c in caronas:
-                                    if c['email_motorista'] == usuario_logado['email'] and c['data'] == data:
-                                        encontrou = True
-                                        confirmacao1 = input(f'Tem certeza que deseja cancelar a carona? S/N:').upper()
-                                        if confirmacao1 == 'S':
-                                            caronas.remove(c)
-                                            print('Carona cancelada com sucesso!')
-                                        else:
-                                            print('Você cancelou o cancelamento da sua carona')
-                                        break
-
-                                if not encontrou:
-                                    print('Nenhuma carona encontrada nesta data!')
+                            cancelar_cadastro(caronas,usuario_logado)
 
                         elif op_menu == 7:
                             print('------ Detalhes da Carona ------')
@@ -205,6 +164,16 @@ while True:
                                 print("Senha alterada com sucesso!")
                             else:
                                 print("Senha atual incorreta.")
+
+                        elif op_menu == 10:
+                            print('------ Alterar Email ------')
+                            email_atual = input('Digite sua senha atual: ').strip()
+                            if usuario_logado['email'] == email_atual:
+                                novo_email = input('Digite o novo email: ').strip()
+                                usuario_logado['email'] = novo_email
+                                print("email alterado com sucesso!")
+                            else:
+                                print("email atual incorreto.")
 
                     else:
 
@@ -257,22 +226,9 @@ while True:
                             print('------ Reservar Vaga em Carona ------')
                             email_motorista = input('Digite o e-mail do motorista: ').strip().lower()
                             data_carona = input('Digite a data da carona (ex: DD/MM/AAAA): ').strip()
-
-                            carona_encontrada = None
-                            for carona in caronas:
-                                if carona['email_motorista'] == email_motorista and carona['data'] == data_carona:
-                                    carona_encontrada = carona
-                                    break
-
+                            carona_encontrada = reservar_carona(email_motorista, data_carona, caronas, usuario_logado)
                             if carona_encontrada:
-                                if carona_encontrada['vagas'] > 0:
-                                    carona_encontrada['vagas'] -= 1
-                                    carona_encontrada['reservas'].append(usuario_logado['nome'])
-                                    print(f'Parabéns! Você reservou sua vaga com {carona_encontrada["motorista"]}.')
-                                else:
-                                    print('Desculpe, essa carona não tem mais vagas disponíveis.')
-                            else:
-                                print('Carona não encontrada.')
+                                print('Reseva feita com sucesso!')
 
                         elif op_menu == 4:
                             print('Voltando ao menu principal...')
@@ -302,32 +258,7 @@ while True:
                             print('------ Detalhes da Carona ------')
                             email_motorista = input('Digite o e-mail do motorista: ').strip().lower()
                             data_carona = input('Digite a data da carona (DD/MM/AAAA): ').strip()
-
-                            carona_encontrada = None
-                            for carona in caronas:
-                                if carona['email_motorista'] == email_motorista and carona['data'] == data_carona:
-                                    carona_encontrada = carona
-                                    break
-
-                            if carona_encontrada:
-                                print(f"Origem: {carona_encontrada['origem']}")
-                                print(f"Destino: {carona_encontrada['destino']}")
-                                print(f"Horário: {carona_encontrada['horario']}")
-                                print(f"Valor por vaga: R$ {carona_encontrada['valor_vaga']:.2f}")
-                                print(f"Vagas restantes: {carona_encontrada['vagas']}")
-
-                                if len(carona_encontrada['reservas']) > 0:
-                                    passageiros = ""
-                                    for i in range(len(carona_encontrada['reservas'])):
-                                        if i < len(carona_encontrada['reservas']) - 1:
-                                            passageiros += carona_encontrada['reservas'][i] + ", "
-                                        else:
-                                            passageiros += carona_encontrada['reservas'][i]
-                                    print(f"Passageiros: {passageiros}")
-                                else:
-                                    print("Sem passageiros reservados.")
-                            else:
-                                print("Carona não encontrada.")
+                            detalhes_da_carona(email_motorista, data_carona, caronas)
 
                         elif op_menu == 7:
                             print('------ Alterar Senha ------')

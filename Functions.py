@@ -1,14 +1,15 @@
-def verificar_carona(email_motorista,data_carona,caronas,usuario_logado):
-    carona_encontrada: None
+def reservar_carona(email_motorista,data_carona,caronas,usuario_logado):
+    carona_encontrada = None
     for carona in caronas:
         if carona['email_motorista'] == email_motorista and carona['data'] == data_carona:
             carona_encontrada = carona
-      
-        if carona_encontrada:
-            if carona_encontrada['vagas'] > 0:
-                carona_encontrada['vagas'] -= 1
-                carona_encontrada['reservas'].append(usuario_logado['nome'])
-                return carona
+            if carona_encontrada:
+                if carona_encontrada['vagas'] > 0:
+                    carona_encontrada['vagas'] -= 1
+                    carona_encontrada['reservas'].append(usuario_logado['nome'])
+                    return carona
+        elif carona['email_motorista'] != email_motorista or carona['data'] != data_carona:
+            print('o email ou data da carona está errado!')
         else:
             print('Desculpe, essa carona não tem mais vagas disponíveis.')
     if carona_encontrada == None:
@@ -99,3 +100,51 @@ def detalhes_da_carona(email_motorista,data_carona,caronas):
     arq.write(texto)
     arq.close()
     """
+
+def carona_disponiveis(caronas):
+    print('------ Caronas Disponíveis ------')
+    caronas_disponiveis = []
+    for c in caronas:
+        if c['vagas'] > 0:
+            caronas_disponiveis.append(c)
+    if len(caronas_disponiveis) == 0:
+        print('Nenhuma carona disponível no momento.')
+    else:
+        for carona in caronas_disponiveis:
+            print("\n--- Carona ---")
+            print(f"Motorista: {carona['motorista']}")
+            print(f"Origem: {carona['origem']}")
+            print(f"Destino: {carona['destino']}")
+            print(f"Data: {carona['data']}")
+            print(f"Horário: {carona['horario']}")
+            print(f"Vagas disponíveis: {carona['vagas']}")
+            print(f"Valor por vaga: R$ {carona['valor_vaga']:.2f}")
+
+def cancelar_cadastro(caronas,usuario_logado):
+    print('----- CANCELAR CADASTRO -----')
+
+    tem_carona = False
+    for c in caronas:
+        if c['email_motorista'] == usuario_logado['email']:
+            tem_carona = True
+            break
+
+    if not tem_carona:
+        print('Você não tem caronas cadastradas.')
+    else:
+        data = input('Digite a DATA da carona que deseja cancelar (DD/MM/AAAA): ')
+
+        encontrou = False
+        for c in caronas:
+            if c['email_motorista'] == usuario_logado['email'] and c['data'] == data:
+                encontrou = True
+                confirmacao1 = input(f'Tem certeza que deseja cancelar a carona? S/N:').upper()
+                if confirmacao1 == 'S':
+                    caronas.remove(c)
+                    print('Carona cancelada com sucesso!')
+                else:
+                    print('Você cancelou o cancelamento da sua carona')
+                break
+
+        if not encontrou:
+            print('Nenhuma carona encontrada nesta data!')
