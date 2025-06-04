@@ -148,3 +148,5 @@ def cancelar_cadastro(caronas,usuario_logado):
 
         if not encontrou:
             print('Nenhuma carona encontrada nesta data!')
+
+print('oi')
