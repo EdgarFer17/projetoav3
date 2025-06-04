@@ -149,4 +149,15 @@ def cancelar_cadastro(caronas,usuario_logado):
         if not encontrou:
             print('Nenhuma carona encontrada nesta data!')
 
-print('oi')
+def fazer_login(cadastro):
+    print('-------- Login --------')
+    email_login = input('Digite seu email: ').strip().lower()
+    senha_login = input('Digite sua senha: ').strip()
+    
+    for cadastrados in cadastro:
+        if cadastrados['email'] == email_login and cadastrados['senha'] == senha_login:
+            print(f"Login bem-sucedido! Bem-vindo(a), {cadastrados['nome']} ({cadastrados['tipo']}).")
+            return cadastrados
+    
+    print("Email ou senha incorretos. Tente novamente.")
+    return None
