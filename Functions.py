@@ -30,7 +30,7 @@ def cadastrar_usuarios(naopode, cadastro, count):
 
         email_existente = False
         for usuario in cadastro:
-            if usuario['email'] == email:
+            if 'email' in usuario and usuario['email'] == email:
                 email_existente = True
                 break
         
@@ -94,15 +94,6 @@ def detalhes_da_carona(email_motorista,data_carona,caronas):
         print("Carona não encontrada.")
 
 
-
-    """
-    def inserir_arquivo(nome, end, idade):
-    arq = open('arquivo.txt', 'a')
-    texto = f'nome:{nome};endereco:{end};idade{idade}\n'
-    arq.write(texto)
-    arq.close()
-    """
-
 def carona_disponiveis(caronas):
     print('------ Caronas Disponíveis ------')
     caronas_disponiveis = []
@@ -152,14 +143,53 @@ def cancelar_cadastro(caronas,usuario_logado):
             print('Nenhuma carona encontrada nesta data!')
 
 def fazer_login(cadastro):
-    print('-------- Login --------')
     email_login = input('Digite seu email: ').strip().lower()
     senha_login = input('Digite sua senha: ').strip()
-    
+
     for cadastrados in cadastro:
-        if cadastrados['email'] == email_login and cadastrados['senha'] == senha_login:
-            print(f"Login bem-sucedido! Bem-vindo(a), {cadastrados['nome']} ({cadastrados['tipo']}).")
-            return cadastrados
-    
-    print("Email ou senha incorretos. Tente novamente.")
+        if 'email' in cadastrados and 'senha' in cadastrados:
+            if cadastrados['email'] == email_login and cadastrados['senha'] == senha_login:
+                print(f"Login realizado com sucesso! Bem-vindo(a), {cadastrados['nome']}.")
+                return cadastrados
+    print('Email ou senha incorretos.')
     return None
+
+
+def importar_usuarios():
+    usuarios = []
+    with open("usuarios.txt", "r", encoding="utf-8") as arquivo:
+        for linha in arquivo:
+            partes = linha.strip().split(", ")
+            dados = {}
+            for parte in partes:
+                chave, valor = parte.split(": ")
+                dados[chave.strip()] = valor.strip()
+            dados['ID'] = int(dados['ID'])
+            usuarios.append(dados)
+    return usuarios
+
+def relatorio_totalizador(caronas, usuario_logado):
+    print('------ Relatório de Totalizadores ------')
+    encontrou = False
+    total_geral = 0
+
+    for carona in caronas:
+        if carona['email_motorista'] == usuario_logado['email']:
+            encontrou = True
+            vagas_ocupadas = len(carona['reservas'])
+            total_receber = carona['valor_vaga'] * vagas_ocupadas
+            total_geral += total_receber
+            print('\n--- Carona ---')
+            print(f"Origem: {carona['origem']}")
+            print(f"Destino: {carona['destino']}")
+            print(f"Data: {carona['data']}")
+            print(f"Horário: {carona['horario']}")
+            print(f"Valor por vaga: R$ {carona['valor_vaga']:.2f}")
+            print(f"Vagas restantes: {carona['vagas']}")
+            print(f"Total a receber: R$ {total_receber:.2f}")
+    
+    if not encontrou:
+        print("Não há caronas cadastradas.")
+    else:
+        print('\n----------------------------------------')
+        print(f"TOTAL GERAL A RECEBER: R$ {total_geral:.2f}")
